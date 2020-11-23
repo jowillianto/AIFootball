@@ -82,13 +82,13 @@ class Defender(Agent):
     def SetReward(self):
         self.RefreshDec()
         if(self.Dec.reward[self.Index] < 0):
-            self.Reward     =   -1
+            self.Reward     =   -2
             self.Term       =   True
         elif(self.Dec.reward[self.Index] > 0):
             self.Reward     =   0
             self.Term       =   True
         else:  
-            self.Reward     =   0.001
+            self.Reward     =   0.1
             self.Term       =   False
         
     def SaveData(self):
@@ -143,10 +143,10 @@ class Striker(Agent):
             self.Reward     =   0
             self.Term       =   True
         elif(self.Dec.reward[self.Index] > 0):
-            self.Reward     =   1
+            self.Reward     =   2
             self.Term       =   True
         else:   
-            self.Reward     =   -0.001
+            self.Reward     =   -0.1
             self.Term       =   False
         
     def SaveData(self):
@@ -159,9 +159,9 @@ Purple  = [Defender(BlueBehavior, 0, 10000, 64, 5, 312, 0.99, 1.0, 0.0001, 0.1, 
 
 for i in range(2):
     Blue[i].Read()
-    Purple[i].Read()
+    #Purple[i].Read()
     Blue[i].UpdateState()
-    Purple[i].UpdateState()
+    #Purple[i].UpdateState()
 
 for i in range(1000000):
     #Get Actions
@@ -178,13 +178,13 @@ for i in range(1000000):
     loss = []
     for j in range(2):
         Blue[j].Read()
-        Purple[j].Read()
+        #Purple[j].Read()
         Blue[j].SetReward()
-        Purple[j].SetReward()
+        #Purple[j].SetReward()
         Blue[j].SaveData()
-        Purple[j].SaveData()
+        #Purple[j].SaveData()
         loss.append(Blue[j].Train())
-        loss.append(Purple[j].Train())
+        #loss.append(Purple[j].Train())
 
     #Check Resets
     if(Blue[0].Dec.reward[0] != 0):
@@ -195,11 +195,11 @@ for i in range(1000000):
     if(i % 1000 == 0):
         for j in range(2):
             Blue[j].UpdateNet()
-            Purple[j].UpdateNet()
+            #Purple[j].UpdateNet()
             Blue[j].SaveNet()
-            Purple[j].SaveNet()
+            #Purple[j].SaveNet()
     
     if(i % 100 == 0):
         print(i)
         print(loss)
-        print(Purple[0].Reward, Purple[1].Reward, Blue[0].Reward, Blue[1].Reward)
+        print(Blue[0].Reward, Blue[1].Reward)
