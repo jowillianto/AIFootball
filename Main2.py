@@ -43,7 +43,7 @@ class Defender(Agent):
         self.Behavior   = behavior
         self.Action     = [0, 0, 0] 
         self.ActSpace   = tuple([
-            [0, 0, 0], [0, 0, 1], [0, 0, 2],
+            [0, 0, 0], [1, 0, 0], [2, 0, 0],
             [0, 1, 0], [0, 2, 0]
         ])
         self.ActNum     = 0
