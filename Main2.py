@@ -6,7 +6,7 @@ from TorchQ import Agent
 #ENVS Declaration
 channel = EngineConfigurationChannel()
 env     = UnityEnvironment(file_name = "CoE202", side_channels = [channel])
-channel.set_configuration_parameters(time_scale = 5, width = 800, height = 400)
+channel.set_configuration_parameters(time_scale = 5, width = 600, height = 400)
 
 #Begin Env
 env.reset()
