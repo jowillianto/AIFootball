@@ -65,9 +65,11 @@ class Defender(Agent):
         Back            = sensor_back_sig(self.Dec.obs[1][self.Index, :])
         for i in range(0, 3):
             for j in range(0, 10):
-                self.Next.extend(Front[i][j])
+                for k in range(0, 7):
+                    self.Next.append(Front[i][j][k]*Front[i][j][7])
             for j in range(0, 3):
-                self.Next.extend(Back[i][j])
+                for k in range(0, 7):
+                    self.Next.append(Back[i][j][k]*Back[i][j][7])
     
     def UpdateState(self):
         self.State      = self.Next
@@ -123,9 +125,11 @@ class Striker(Agent):
         Back            = sensor_back_sig(self.Dec.obs[1][self.Index, :])
         for i in range(0, 3):
             for j in range(0, 10):
-                self.Next.extend(Front[i][j])
+                for k in range(0, 7):
+                    self.Next.append(Front[i][j][k]*Front[i][j][7])
             for j in range(0, 3):
-                self.Next.extend(Back[i][j])
+                for k in range(0, 7):
+                    self.Next.append(Back[i][j][k]*Back[i][j][7])
     
     def UpdateState(self):
         self.State      = self.Next
@@ -152,10 +156,10 @@ class Striker(Agent):
     def SaveData(self):
         self.SaveState(self.State, self.Reward, self.ActNum, self.Next, self.Term)
 
-Blue    = [Defender(BlueBehavior, 0, 10000, 128, 5, 312, 0.99, 1.0, 0.0001, 0.1, 256, "DefP0"),
-            Striker(BlueBehavior, 1, 10000, 128, 7, 312, 0.99, 1.0, 0.0001, 0.1, 256, "AttP0")]
-Purple  = [Defender(BlueBehavior, 0, 10000, 512, 5, 312, 0.99, 1.0, 0.0001, 0.1, 256, "DefP1"),
-            Striker(BlueBehavior, 1, 10000, 512, 7, 312, 0.99, 1.0, 0.0001, 0.1, 256, "AttP1")] 
+Blue    = [Defender(BlueBehavior, 0, 10000, 128, 5, 273, 0.99, 1.0, 0.0001, 0.1, 256, "DefP0"),
+            Striker(BlueBehavior, 1, 10000, 128, 7, 273, 0.99, 1.0, 0.0001, 0.1, 256, "AttP0")]
+Purple  = [Defender(BlueBehavior, 0, 10000, 128, 5, 273, 0.99, 1.0, 0.0001, 0.1, 256, "DefP1"),
+            Striker(BlueBehavior, 1, 10000, 128, 7, 273, 0.99, 1.0, 0.0001, 0.1, 256, "AttP1")] 
 
 for i in range(2):
     Blue[i].Read()
