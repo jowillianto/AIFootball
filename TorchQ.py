@@ -126,5 +126,6 @@ class Agent():
         Label   = Reward + self.Gamma*torch.max(Target, dim = 1)[0]
         loss    = self.PolicyNet.loss(Policy, Label)
         loss.backward()
+        self.PolicyNet.optimizer.step()
         self.DecayEpsilon()
         return loss
