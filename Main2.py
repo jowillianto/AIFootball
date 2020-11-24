@@ -88,7 +88,7 @@ class Defender(Agent):
             self.Reward     =   0
             self.Term       =   True
         else:  
-            self.Reward     =   0.1
+            self.Reward     =   0.001
             self.Term       =   False
         
     def SaveData(self):
@@ -146,16 +146,16 @@ class Striker(Agent):
             self.Reward     =   2
             self.Term       =   True
         else:   
-            self.Reward     =   -0.1
+            self.Reward     =   -0.001
             self.Term       =   False
         
     def SaveData(self):
         self.SaveState(self.State, self.Reward, self.ActNum, self.Next, self.Term)
 
-Blue    = [Defender(BlueBehavior, 0, 10000, 64, 5, 312, 0.99, 1.0, 0.0001, 0.1, 256, "DefP0"),
-            Striker(BlueBehavior, 1, 10000, 64, 7, 312, 0.99, 1.0, 0.0001, 0.1, 256, "AttP0")]
-Purple  = [Defender(BlueBehavior, 0, 10000, 64, 5, 312, 0.99, 1.0, 0.0001, 0.1, 256, "DefP1"),
-            Striker(BlueBehavior, 1, 10000, 64, 7, 312, 0.99, 1.0, 0.0001, 0.1, 256, "AttP1")] 
+Blue    = [Defender(BlueBehavior, 0, 10000, 128, 5, 312, 0.99, 1.0, 0.0001, 0.1, 256, "DefP0"),
+            Striker(BlueBehavior, 1, 10000, 128, 7, 312, 0.99, 1.0, 0.0001, 0.1, 256, "AttP0")]
+Purple  = [Defender(BlueBehavior, 0, 10000, 512, 5, 312, 0.99, 1.0, 0.0001, 0.1, 256, "DefP1"),
+            Striker(BlueBehavior, 1, 10000, 512, 7, 312, 0.99, 1.0, 0.0001, 0.1, 256, "AttP1")] 
 
 for i in range(2):
     Blue[i].Read()
@@ -166,6 +166,7 @@ for i in range(2):
 for i in range(1000000):
     #Get Actions
     for j in range(2):
+        Blue[j].UpdateState()
         Blue[j].SetAction()
         Purple[j].SetAction()
 
