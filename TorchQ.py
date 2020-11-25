@@ -2,11 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import numpy as np
-from math import exp
 import os
-import time
-from collections import deque
-import matplotlib.pyplot as plt
 
 class NeuralNetwork(nn.Module):
     def __init__(self, Input, Output, Hidden, Activation, Loss, LearnRate):

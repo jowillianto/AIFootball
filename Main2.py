@@ -2,6 +2,7 @@ import numpy as np
 from mlagents_envs.environment import UnityEnvironment
 from mlagents_envs.side_channel.engine_configuration_channel import EngineConfigurationChannel
 from TorchQ import Agent
+import matplotlib.pyplot as plt
 
 #ENVS Declaration
 channel = EngineConfigurationChannel()
@@ -35,6 +36,13 @@ def sensor_back_sig(data):
     for stack in range(3):
         sensor_data.append(player[3*stack : (3*stack) + 3])
     return sensor_data
+
+def plot(xDataSet, yDataSet, xLabel, yLabel, path):
+    for i in yDataSet:
+        plt.plot(xDataSet, yDataSet)
+    plt.xlabel(xLabel)
+    plt.ylabel(yLabel)
+    plt.savefig('%s.png' % path)
 
 #define class for player stuff
 class Defender(Agent):
@@ -169,9 +177,9 @@ for i in range(2):
     #Purple[i].Read()
     Blue[i].UpdateState()
     #Purple[i].UpdateState()
-scores = []
+scores = [list(), list()]
 hist   = []
-for episode in range(1000):
+for episode in range(10):
     done = False
     score = [0, 0]
     count = 0
@@ -211,8 +219,9 @@ for episode in range(1000):
         Blue[j].SaveNet()
         #Purple[j].SaveNet()
     env.reset()
-    scores.append((score[0], score[1]))
+    scores[0].append(score[0])
+    scores[1].append(score[1])
     hist.append(episode)
-    print(hist[episode], ' ' ,scores[episode])
+    print(hist[episode], ' ' ,scores[0][episode], ' ', scores[1][episode])
     
-        
+plot(hist, scores, 'Episode', 'Score', 'Res')
