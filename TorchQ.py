@@ -125,8 +125,8 @@ class Agent():
         
         #Input to Network
         self.PolicyNet.optimizer.zero_grad()
-        Policy  = self.PolicyNet(State)[BatchIndex, Action].to(self.PolicyNet.device)
-        Target  = self.TargetNet(Next).to(self.PolicyNet.device)
+        Policy  = self.PolicyNet(State)[BatchIndex, Action]
+        Target  = self.TargetNet(Next)
         Target[Term] = 0.0
         Label   = Reward + self.Gamma*torch.max(Target, dim = 1)[0]
         loss    = self.PolicyNet.loss(Policy, Label)
