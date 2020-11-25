@@ -151,6 +151,9 @@ class Striker(Agent):
             self.Term       =   True
         else:   
             self.Reward     =   -0.001
+            for i in range(0, 13):
+                if(self.Next[i*7] != 0):
+                    self.Reward += 1/self.Next[i*7]*(1e-5)
             self.Term       =   False
         
     def SaveData(self):
@@ -166,45 +169,50 @@ for i in range(2):
     #Purple[i].Read()
     Blue[i].UpdateState()
     #Purple[i].UpdateState()
-
-for i in range(1000000):
-    #Get Actions
-    for j in range(2):
-        Blue[j].UpdateState()
-        Blue[j].SetAction()
-        Purple[j].SetAction()
-
-    #Set The Actions
-    env.set_actions(BlueBehavior, np.array([Blue[0].GetAction(), Blue[1].GetAction()]))
-    env.set_actions(PurpleBehavior, np.array([Purple[0].GetAction(), Purple[1].GetAction()]))
-    env.step()
-
-    #Set Other Stuffs
-    loss = []
-    for j in range(2):
-        Blue[j].Read()
-        #Purple[j].Read()
-        Blue[j].SetReward()
-        #Purple[j].SetReward()
-        Blue[j].SaveData()
-        #Purple[j].SaveData()
-        loss.append(Blue[j].Train())
-        #loss.append(Purple[j].Train())
-
-    #Check Resets
-    if(Blue[0].Dec.reward[0] != 0):
-        env.reset()
-        print("Goal, Reset")
-
-    #Hard Update
-    if(i % 1000 == 0):
+scores = []
+hist   = []
+for episode in range(1000):
+    done = False
+    score = [0, 0]
+    count = 0
+    env.reset()
+    while not done:
+        #Get Actions
         for j in range(2):
-            Blue[j].UpdateNet()
-            #Purple[j].UpdateNet()
-            Blue[j].SaveNet()
-            #Purple[j].SaveNet()
+            Blue[j].UpdateState()
+            Blue[j].SetAction()
+            Purple[j].SetAction()
+
+        #Set The Actions
+        env.set_actions(BlueBehavior, np.array([Blue[0].GetAction(), Blue[1].GetAction()]))
+        env.set_actions(PurpleBehavior, np.array([Purple[0].GetAction(), Purple[1].GetAction()]))
+        env.step()
+
+        for j in range(2):
+            Blue[j].Read()
+            Purple[j].Read()
+            Blue[j].SetReward()
+            #Purple[j].SetReward()
+            Blue[j].SaveData()
+            #Purple[j].SaveData()
+            Blue[j].Train()
+        #Check Resets
+        score[0] += Blue[0].Reward
+        score[1] += Blue[1].Reward
+        if(Blue[0].Dec.reward[0] != 0):
+            env.reset()
+            print("Goal, Reset")
+            done = True
+        count+=1
+        #Hard Update
+    for j in range(2):
+        Blue[j].UpdateNet()
+        #Purple[j].UpdateNet()
+        Blue[j].SaveNet()
+        #Purple[j].SaveNet()
+    env.reset()
+    scores.append((score[0], score[1]))
+    hist.append(episode)
+    print(hist[episode], ' ' ,scores[episode])
     
-    if(i % 100 == 0):
-        print(i)
-        print(loss)
-        print(Blue[0].Reward, Blue[1].Reward)
+        

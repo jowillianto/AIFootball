@@ -4,6 +4,9 @@ import torch.optim as optim
 import numpy as np
 from math import exp
 import os
+import time
+from collections import deque
+import matplotlib.pyplot as plt
 
 class NeuralNetwork(nn.Module):
     def __init__(self, Input, Output, Hidden, Activation, Loss, LearnRate):
@@ -15,6 +18,8 @@ class NeuralNetwork(nn.Module):
         self.relu       = Activation
         self.optimizer  = optim.Adam(self.parameters(), LearnRate)
         self.loss       = Loss
+        self.device     = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.to(self.device)
 
     def forward(self, input):
         input = self.relu(self.fc1(input))
@@ -53,8 +58,8 @@ class Agent():
         self.RewMem     = np.zeros(self.MemSize, dtype = np.float32)
 
         #Declare Networks
-        self.PolicyNet  = NeuralNetwork(Input, Output, MaxNN, nn.ReLU(), nn.MSELoss(), 1e-4)
-        self.TargetNet  = NeuralNetwork(Input, Output, MaxNN, nn.ReLU(), nn.MSELoss(), 1e-4)
+        self.PolicyNet  = NeuralNetwork(Input, Output, MaxNN, nn.ReLU(), nn.MSELoss(), 1e-5)
+        self.TargetNet  = NeuralNetwork(Input, Output, MaxNN, nn.ReLU(), nn.MSELoss(), 1e-5)
         self.PolicyPath = 'Policy%s.model' % FilePath
         self.TargetPath = 'Target%s.model' % FilePath
         self.TargetNet.eval()
@@ -92,7 +97,7 @@ class Agent():
         
     def ChooseAction(self, state):
         if self.Eps < np.random.random():
-            Input = torch.tensor([state], dtype = torch.float32)
+            Input = torch.tensor([state], dtype = torch.float32).to(self.PolicyNet.device)
             return self.PolicyNet(Input).argmax(dim = 1)
         else:
             return np.random.choice(self.ActionSpace)
@@ -112,16 +117,16 @@ class Agent():
         BatchIndex  = np.arange(self.BatchSize, dtype = np.int32) 
 
         #Create Batches
-        State   = torch.tensor(self.StateMem[Batch])
-        Next    = torch.tensor(self.NextMem[Batch])
-        Reward  = torch.tensor(self.RewMem[Batch])
-        Term    = torch.tensor(self.TermMem[Batch])
+        State   = torch.tensor(self.StateMem[Batch]).to(self.PolicyNet.device)
+        Next    = torch.tensor(self.NextMem[Batch]).to(self.PolicyNet.device)
+        Reward  = torch.tensor(self.RewMem[Batch]).to(self.PolicyNet.device)
+        Term    = torch.tensor(self.TermMem[Batch]).to(self.PolicyNet.device)
         Action  = self.ActionMem[Batch]
         
         #Input to Network
         self.PolicyNet.optimizer.zero_grad()
-        Policy  = self.PolicyNet(State)[BatchIndex, Action]
-        Target  = self.TargetNet(Next)
+        Policy  = self.PolicyNet(State)[BatchIndex, Action].to(self.PolicyNet.device)
+        Target  = self.TargetNet(Next).to(self.PolicyNet.device)
         Target[Term] = 0.0
         Label   = Reward + self.Gamma*torch.max(Target, dim = 1)[0]
         loss    = self.PolicyNet.loss(Policy, Label)
