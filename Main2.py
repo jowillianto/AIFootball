@@ -159,9 +159,9 @@ class Striker(Agent):
             self.Term       =   True
         else:   
             self.Reward     =   -0.001
-            for i in range(0, 13):
+            for i in range(0, 10):
                 if(self.Next[i*7] != 0):
-                    self.Reward += 1/self.Next[i*7]*(1e-5)
+                    self.Reward += 1/self.Next[i*7]*(1e-4)
             self.Term       =   False
         
     def SaveData(self):

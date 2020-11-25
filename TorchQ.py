@@ -54,8 +54,8 @@ class Agent():
         self.RewMem     = np.zeros(self.MemSize, dtype = np.float32)
 
         #Declare Networks
-        self.PolicyNet  = NeuralNetwork(Input, Output, MaxNN, nn.ReLU(), nn.MSELoss(), 1e-4)
-        self.TargetNet  = NeuralNetwork(Input, Output, MaxNN, nn.ReLU(), nn.MSELoss(), 1e-4)
+        self.PolicyNet  = NeuralNetwork(Input, Output, MaxNN, nn.ReLU(), nn.MSELoss(), 1e-5)
+        self.TargetNet  = NeuralNetwork(Input, Output, MaxNN, nn.ReLU(), nn.MSELoss(), 1e-5)
         self.PolicyPath = 'Policy%s.model' % FilePath
         self.TargetPath = 'Target%s.model' % FilePath
         self.TargetNet.eval()
