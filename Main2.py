@@ -39,7 +39,7 @@ def sensor_back_sig(data):
 
 def plot(xDataSet, yDataSet, xLabel, yLabel, path):
     for i in yDataSet:
-        plt.plot(xDataSet, yDataSet)
+        plt.plot(xDataSet, i)
     plt.xlabel(xLabel)
     plt.ylabel(yLabel)
     plt.savefig('%s.png' % path)
@@ -179,7 +179,7 @@ for i in range(2):
     #Purple[i].UpdateState()
 scores = [list(), list()]
 hist   = []
-for episode in range(10):
+for episode in range(20):
     done = False
     score = [0, 0]
     count = 0
