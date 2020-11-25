@@ -152,7 +152,7 @@ class Striker(Agent):
     def SetReward(self):
         self.RefreshDec()
         if(self.Dec.reward[self.Index] < 0):
-            self.Reward     =   0
+            self.Reward     =   -2
             self.Term       =   True
         elif(self.Dec.reward[self.Index] > 0):
             self.Reward     =   2
