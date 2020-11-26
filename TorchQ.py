@@ -14,7 +14,10 @@ class NeuralNetwork(nn.Module):
         self.relu       = Activation
         self.optimizer  = optim.Adam(self.parameters(), LearnRate)
         self.loss       = Loss
-        self.device     = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        if(torch.cuda.is_available()):
+            self.device     = torch.device('cuda')
+        else:
+            self.device     = 'cpu'
         self.to(self.device)
 
     def forward(self, input):

@@ -68,16 +68,18 @@ class Defender(Agent):
     
     def Read(self):
         self.RefreshDec()
-        self.Next       = list()
+        self.Next       = []
         Front           = sensor_front_sig(self.Dec.obs[0][self.Index, :])
         Back            = sensor_back_sig(self.Dec.obs[1][self.Index, :])
         for i in range(0, 3):
             for j in range(0, 10):
                 for k in range(0, 7):
-                    self.Next.append(Front[i][j][k]*Front[i][j][7])
+                    self.Next.append(Front[i][j][k])
+                self.Next.append(Front[i][j][7]*10)
             for j in range(0, 3):
                 for k in range(0, 7):
                     self.Next.append(Back[i][j][k]*Back[i][j][7])
+                self.Next.append(Front[i][j][7]*10)
     
     def UpdateState(self):
         self.State      = self.Next
@@ -134,10 +136,12 @@ class Striker(Agent):
         for i in range(0, 3):
             for j in range(0, 10):
                 for k in range(0, 7):
-                    self.Next.append(Front[i][j][k]*Front[i][j][7])
+                    self.Next.append(Front[i][j][k])
+                self.Next.append(Front[i][j][7]*10)
             for j in range(0, 3):
                 for k in range(0, 7):
                     self.Next.append(Back[i][j][k]*Back[i][j][7])
+                self.Next.append(Front[i][j][7]*10)
     
     def UpdateState(self):
         self.State      = self.Next
@@ -160,17 +164,19 @@ class Striker(Agent):
         else:   
             self.Reward     =   -0.001
             for i in range(0, 10):
-                if(self.Next[i*7] != 0):
-                    self.Reward += 1/self.Next[i*7]*(1e-4)
+                if(self.Next[i*8+7] < 3):
+                    self.Reward = 0
+                elif(self.Next[i*8 + 7] < 0.5):
+                    self.Reward = 0.001
             self.Term       =   False
         
     def SaveData(self):
         self.SaveState(self.State, self.Reward, self.ActNum, self.Next, self.Term)
 
-Blue    = [Defender(BlueBehavior, 0, 10000, 128, 5, 273, 0.99, 1.0, 0.0001, 0.1, 256, "DefP0"),
-            Striker(BlueBehavior, 1, 10000, 128, 7, 273, 0.99, 1.0, 0.0001, 0.1, 256, "AttP0")]
-Purple  = [Defender(BlueBehavior, 0, 10000, 128, 5, 273, 0.99, 1.0, 0.0001, 0.1, 256, "DefP1"),
-            Striker(BlueBehavior, 1, 10000, 128, 7, 273, 0.99, 1.0, 0.0001, 0.1, 256, "AttP1")] 
+Blue    = [Defender(BlueBehavior, 0, 10000, 128, 5, 312, 0.99, 1.0, 0.0001, 0.1, 256, "DefP0"),
+            Striker(BlueBehavior, 1, 10000, 128, 7, 312, 0.99, 1.0, 0.0001, 0.1, 256, "AttP0")]
+Purple  = [Defender(BlueBehavior, 0, 10000, 128, 5, 312, 0.99, 1.0, 0.0001, 0.1, 256, "DefP1"),
+            Striker(BlueBehavior, 1, 10000, 128, 7, 312, 0.99, 1.0, 0.0001, 0.1, 256, "AttP1")] 
 
 for i in range(2):
     Blue[i].Read()
@@ -211,6 +217,8 @@ for episode in range(20):
             env.reset()
             print("Goal, Reset")
             done = True
+        if(count % 100 == 0):
+            print(count, score[0], score[1])
         count+=1
         #Hard Update
     for j in range(2):
