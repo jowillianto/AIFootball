@@ -113,7 +113,7 @@ class Striker(Agent):
         self.Behavior   = behavior
         self.Action     = [0, 0, 0] 
         self.ActSpace   = tuple([
-            [0, 0, 0], [0, 0, 1],
+            [0, 0, 0], [0, 0, 1], [0, 0, 2],
             [0, 1, 0], [0, 2, 0], [1, 0, 0], [2, 0, 0]
         ])
         self.ActNum     = 0
@@ -166,18 +166,22 @@ class Striker(Agent):
             if(self.Next[0] != 1):
                 self.Reward = -0.002
             elif(self.Next[0] == 1 and self.Next[7] < 0.3):
-                self.Reward = 0.001
+                self.Reward = 0.002
+                self.RewMem[(self.Pos - 1)%self.MemSize] = 0.002
+                self.RewMem[(self.Pos - 2)%self.MemSize] = 0.002
             elif(self.Next[0] == 1 and self.Next[7] < 3):
                 self.Reward = 0
+                self.RewMem[(self.Pos - 1)%self.MemSize] = 0
+                self.RewMem[(self.Pos - 2)%self.MemSize] = 0
             self.Term       =   False
         
     def SaveData(self):
         self.SaveState(self.State, self.Reward, self.ActNum, self.Next, self.Term)
 
 Blue    = [Defender(BlueBehavior, 0, 10000, 128, 5, 312, 0.99, 1.0, 0.0001, 0.1, 256, "DefP0"),
-            Striker(BlueBehavior, 1, 10000, 128, 6, 312, 0.99, 1.0, 0.0001, 0.1, 256, "AttP0")]
+            Striker(BlueBehavior, 1, 10000, 128, 7, 312, 0.99, 1.0, 0.0001, 0.1, 256, "AttP0")]
 Purple  = [Defender(BlueBehavior, 0, 10000, 128, 5, 312, 0.99, 1.0, 0.0001, 0.1, 256, "DefP1"),
-            Striker(BlueBehavior, 1, 10000, 128, 6, 312, 0.99, 1.0, 0.0001, 0.1, 256, "AttP1")] 
+            Striker(BlueBehavior, 1, 10000, 128, 7, 312, 0.99, 1.0, 0.0001, 0.1, 256, "AttP1")] 
 
 for i in range(2):
     Blue[i].Read()
